@@ -52,9 +52,10 @@ It's still useful to load a setup file before your test code. If you are setting
 To include code before your test files, set the {% url `supportFile` configuration#Folders-Files %} path. By default, {% url `supportFile` configuration#Folders-Files %} is set to look for one of the following files:
 
 - `cypress/support/index.js`
+- `cypress/support/index.ts`
 - `cypress/support/index.coffee`
 
-Just like with your test files, the {% url `supportFile` configuration#Folders-Files %} can use ES2015+ (or CoffeeScript) and modules, so you can import/require other files as needed.
+Just like with your test files, the {% url `supportFile` configuration#Folders-Files %} can use ES2015+, {% url "TypeScript" typescript-support %} or CoffeeScript and modules, so you can import/require other files as needed.
 
 # Command Errors
 
@@ -94,6 +95,24 @@ If you are purposefully writing commands outside of a test, there is probably a 
 ## {% fa fa-exclamation-triangle red %} `cy...()` failed because the element you are chaining off of has become detached or removed from the dom
 
 Getting this error means you've tried to interact with a "dead" DOM element - meaning it's been detached or completely removed from the DOM.
+
+<!--
+To reproduce the following screenshot:
+describe('detachment example', () => {
+  beforeEach(() => {
+    cy.get('body').then(($body) => {
+      const $outer = Cypress.$('<div />').appendTo($body)
+      Cypress.$('<button />').on('click', () => { $outer[0].remove() }).appendTo($outer)
+    })
+  })
+  it('detaches from dom', () => {
+    cy.get('button')
+    .click()
+    .parent()
+    .should('have.text', 'Clicked')
+  })
+})
+-->
 
 <!--
 To reproduce the following screenshot:
